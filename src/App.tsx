@@ -20,7 +20,7 @@ function App() {
         <div className="flex justify-center h-screen">
           <div className="w-full">
             <ul className="flex justify-center items-center my-4">
-              {tabs.map((tab: any, i: number) => <li className={`cursor-pointer py-2 px-4 text-gray-500 border-b-8 ${activeTab.index === i ? "text-green-500 border-green-500" : ""}`} onClick={() => setActiveTab(tab)}>{tab.title}</li>)}
+              {tabs.map((tab: any, i: number) => <li key={i} className={`cursor-pointer py-2 px-4 text-gray-500 border-b-8 ${activeTab.index === i ? "text-green-500 border-green-500" : ""}`} onClick={() => setActiveTab(tab)}>{tab.title}</li>)}
             </ul>
 
             <div className="bg-white p-8 text-left mx-auto border">
