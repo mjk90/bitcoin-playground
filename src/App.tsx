@@ -1,11 +1,11 @@
 import React, { useState } from 'react';
-import { MnemonicWords } from './pages';
+import { MnemonicWords, SegWit } from './pages';
 
 import './App.css';
 
 const tabs = [
   { index: 0, title: "Mnemonic Words" },
-  { index: 1, title: "Tab Two" },
+  { index: 1, title: "HD SegWit" },
 ];
 
 function App() {
@@ -26,7 +26,7 @@ function App() {
             <div className="bg-white p-8 text-left mx-auto border">
               {
                 activeTab.index === 0 ? <div onClick={() => setActiveTab(tabs[0])}><MnemonicWords /></div> :
-                activeTab.index === 1 ? <div onClick={() => setActiveTab(tabs[1])}>Content 2</div> :
+                activeTab.index === 1 ? <div onClick={() => setActiveTab(tabs[1])}><SegWit /></div> :
                 <div>No content</div>
               }
             </div>
