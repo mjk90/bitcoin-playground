@@ -8,8 +8,11 @@ import useInput from 'hooks/useInput';
 import { RootState, SegWitState } from 'state/types';
 import { generateAddress, setPath, setPathParts, setSeed } from './reducer';
 
+const pathRegex = /(m\/[0-9]*)/;
 const validateSeed = (value: string | number): string => value ? "" : "BIP39 Seed is required";
-const validatePath = (value: string | number): string => value ? "" : "Derivation Path is required";
+const validatePath = (value: string | number): string => value ? 
+  pathRegex.test(value.toString()) ? "" : "Path is invalid" 
+  : "Derivation Path is required";
 
 export const SegWit = () => {
   const dispatch = useDispatch();
