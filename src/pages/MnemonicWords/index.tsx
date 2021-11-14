@@ -3,7 +3,7 @@ import { generateMnemonic, entropyToMnemonic, mnemonicToSeedSync, validateMnemon
 import { fromSeed } from "bip32";
 import { payments } from "bitcoinjs-lib";
 
-import { Dropdown, CopyButton } from '../../components';
+import { Dropdown, CopyButton, Input } from '../../components';
 
 const dropdownOptions = [/*3,6,9,*/12,15,18,21,24];
 const wordsToBits = (wordsCount: number) => wordsCount / 3 * 32;
@@ -40,7 +40,8 @@ export const MnemonicWords = () => {
     //   'KwDiBf89QgGbjEhKnhXJuH7LrciVrZi3qYjgd9M7rFU73sVHnoWn',
     // );
     const { address } = payments.p2wpkh({ pubkey: root.publicKey });
-    console.log("pub", root.publicKey);
+    console.log("pub", root.publicKey.toString("hex"));
+    console.log("priv", root.privateKey?.toString("hex"));
     console.log("seg", address);
   }
   
@@ -49,24 +50,18 @@ export const MnemonicWords = () => {
     <div className="MnemonicWords flex flex-col">
       <div className="w-full">
         <div>
-          {<button className="bg-blue-500 hover:bg-blue-700 text-white text-sm font-bold py-1 px-2 rounded" type="button" onClick={generate}>Generate</button>}&nbsp;
+          <button className="bg-blue-500 hover:bg-blue-700 text-white text-sm font-bold py-1 px-2 rounded" type="button" onClick={generate}>Generate</button>&nbsp;
           a random mnemonic phrase of &nbsp;
-          {<Dropdown className="MnemonicWords__SelectWordsCount flex-shrink-0 text-sm" options={dropdownOptions} onChange={(option: number) => setWordsCount(option)} />}&nbsp;
+          <Dropdown className="MnemonicWords__SelectWordsCount flex-shrink-0 text-sm" options={dropdownOptions} onChange={(option: number) => setWordsCount(option)} />&nbsp;
           words ({wordsToBits(wordsCount)} bits)
         </div>
-        <div className="flex flex-col relative">
+        <div className="flex flex-wrap relative mt-4">
           <div className="w-full mb-4">
-            <label className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-1 mt-4">Mnemonic Phrase <CopyButton value={words} /></label>
-            <textarea readOnly className="border rounded h-20 w-full resize-none text-gray-700 mt-3 py-1 px-1 pr-16 leading-tight focus:outline-none" placeholder="Mnemonic Words..." value={words + "\n" + bip32Address}></textarea>
+            <label className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-1">Mnemonic Phrase <CopyButton value={words} /></label>
+            <textarea readOnly disabled className="border rounded h-20 w-full resize-none text-gray-700 mt-3 py-1 px-1 pr-16 leading-tight focus:outline-none" placeholder="Mnemonic Words..." value={words + "\n" + bip32Address}></textarea>
           </div>
-          <div className="w-full mb-4">
-            <label className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-1">BIP39 Seed <CopyButton value={seed} /></label>
-            <input readOnly className="border rounded w-full resize-none text-gray-700 mt-3 py-1 px-1 leading-tight focus:outline-none" placeholder="BIP39 Seed..." value={seed} />
-          </div>
-          <div className="w-full mb-4">
-            <label className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-1">Root Key <CopyButton value={root} /></label>
-            <input readOnly className="border rounded w-full resize-none text-gray-700 mt-3 py-1 px-1 leading-tight focus:outline-none" placeholder="Root Key..." value={root} />
-          </div>
+          <Input value={seed} label="BIP39 Seed" readOnly disabled copyButton />
+          <Input value={root} label="Root Key" readOnly disabled copyButton />
         </div>
       </div>
     </div>

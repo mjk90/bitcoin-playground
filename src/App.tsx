@@ -1,11 +1,12 @@
 import React, { useState } from 'react';
-import { MnemonicWords, SegWit } from './pages';
+import { MnemonicWords, SegWit, MultiSig } from './pages';
 
 import './App.css';
 
 const tabs = [
   { index: 0, title: "Mnemonic Words" },
   { index: 1, title: "HD SegWit" },
+  { index: 2, title: "MultiSig" }
 ];
 
 function App() {
@@ -27,6 +28,7 @@ function App() {
               {
                 activeTab.index === 0 ? <div onClick={() => setActiveTab(tabs[0])}><MnemonicWords /></div> :
                 activeTab.index === 1 ? <div onClick={() => setActiveTab(tabs[1])}><SegWit /></div> :
+                activeTab.index === 2 ? <div onClick={() => setActiveTab(tabs[2])}><MultiSig /></div> :
                 <div>No content</div>
               }
             </div>

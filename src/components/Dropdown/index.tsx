@@ -4,12 +4,13 @@ interface DropdownProps {
   className: string;
   label?: string;
   options: Array<string | number>;
+  initialValue?: number;
   onChange?: (item: any) => void;
 }
 
 export const Dropdown = (props: DropdownProps) => {
-  const { className, options, label = "", onChange = (selectedData: any) => {} } = props;
-  const [selectedIndex, setSelectedIndex] = useState(0);
+  const { className, options, initialValue = 0, label = "", onChange = (selectedData: any) => {} } = props;
+  const [selectedIndex, setSelectedIndex] = useState(initialValue);
   const [opened, setOpened] = useState(false);
 
   return (
