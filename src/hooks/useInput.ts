@@ -1,17 +1,16 @@
 import { useState } from "react";
 
 export interface UseInputProps {
-  initialValue: string;
+  value: string | number;
   label?: string;
-  validate?: (value: string) => string;
+  onChange?: (value: string) => void;
+  validate?: (value: string | number) => string;
 }
 
 const useInput = (props: UseInputProps) => {
-  const { initialValue, label = "", validate = (value: string) => "" } = props;
-  const [value, setValue] = useState(initialValue);
+  const { value, label = "", onChange = (value: string) => {}, validate = (value: string | number) => "" } = props;
   const [error, setError] = useState("");
 
-  const handleChange = (event: any) => setValue(event.target.value);
   const handleValidate = () => {
     const err = validate(value);
     setError(err);
@@ -22,8 +21,7 @@ const useInput = (props: UseInputProps) => {
     value,
     label,
     error,
-    setValue,
-    onChange: handleChange,
+    onChange,
     validate: handleValidate
   };
 };

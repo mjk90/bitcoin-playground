@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { payments } from "bitcoinjs-lib";
 
-import { CopyButton } from '../../components';
+import { CopyButton } from 'components';
 
 interface InputValue {
   value: string;

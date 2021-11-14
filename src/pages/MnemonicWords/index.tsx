@@ -3,7 +3,7 @@ import { generateMnemonic, entropyToMnemonic, mnemonicToSeedSync, validateMnemon
 import { fromSeed } from "bip32";
 import { payments } from "bitcoinjs-lib";
 
-import { Dropdown, CopyButton, Input } from '../../components';
+import { Dropdown, CopyButton, Input } from 'components';
 
 const dropdownOptions = [/*3,6,9,*/12,15,18,21,24];
 const wordsToBits = (wordsCount: number) => wordsCount / 3 * 32;
@@ -52,7 +52,7 @@ export const MnemonicWords = () => {
         <div>
           <button className="bg-blue-500 hover:bg-blue-700 text-white text-sm font-bold py-1 px-2 rounded" type="button" onClick={generate}>Generate</button>&nbsp;
           a random mnemonic phrase of &nbsp;
-          <Dropdown className="MnemonicWords__SelectWordsCount flex-shrink-0 text-sm" options={dropdownOptions} onChange={(option: number) => setWordsCount(option)} />&nbsp;
+          <Dropdown className="inline-block flex-shrink-0 text-sm" options={dropdownOptions} onChange={(option: number) => setWordsCount(option)} />&nbsp;
           words ({wordsToBits(wordsCount)} bits)
         </div>
         <div className="flex flex-wrap relative mt-4">

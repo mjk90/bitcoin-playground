@@ -1,55 +1,32 @@
 import React, { useState } from 'react';
 import { fromSeed } from "bip32";
 import { payments } from "bitcoinjs-lib";
+import { useDispatch, useSelector } from 'react-redux';
 
-import { Dropdown, Input, Switch } from '../../components';
-import useInput from '../../hooks/useInput';
+import { Dropdown, Input } from 'components';
+import useInput from 'hooks/useInput';
+import { RootState, SegWitState } from 'state/types';
+import { generateAddress, setPath, setPathParts, setSeed } from './reducer';
 
-const validateSeed = (value: string): string => value ? "" : "BIP39 Seed is required";
-const validatePath = (value: string): string => value ? "" : "Derivation Path is required";
-
-interface PathParts {
-  purpose?: string | number;
-  coin?: string | number;
-  account?: string | number;
-  external?: string | number;
-}
-
+const validateSeed = (value: string | number): string => value ? "" : "BIP39 Seed is required";
+const validatePath = (value: string | number): string => value ? "" : "Derivation Path is required";
 
 export const SegWit = () => {
-  const [pathParts, setPathParts] = useState<PathParts>({ purpose: 44, coin: 0, account: 0, external: 0 });
-
-  const assemblePath = (parts: PathParts) => {
-    const { purpose = pathParts.purpose, coin = pathParts.coin, account = pathParts.account, external = pathParts.external } = parts;
-    return `m/${purpose}'/${coin}'/${account}'/${external}`;
-  };
-
-  const updatePath = (parts: PathParts) => {
-    const { purpose = pathParts.purpose, coin = pathParts.coin, account = pathParts.account, external = pathParts.external } = parts;
-    setPathParts({ purpose, coin, account, external });
-    path.setValue(assemblePath(parts));
-  }
+  const dispatch = useDispatch();
+  const { data: { seed, path, address, pathParts }, error, loading }: SegWitState = useSelector((state: RootState) => state.segWit);
   
-  const seed = useInput({ initialValue: "", label: "BIP39 Seed", validate: validateSeed });
-  const path = useInput({ initialValue: assemblePath(pathParts), label: "Derivation Path", validate: validatePath });
-  const segwitAddress = useInput({ initialValue: "", label: "SegWit Address" });
+  const seedInput = useInput({ value: seed, label: "BIP39 Seed", validate: validateSeed, onChange: (e: any) => dispatch(setSeed(e.target.value)) });
+  const pathInput = useInput({ value: path, label: "Derivation Path", validate: validatePath, onChange: (e: any) => dispatch(setPath(e.target.value)) });
+  const coinInput = useInput({ value: pathParts.coin || 0, label: "Coin", onChange: (e: any) => dispatch(setPathParts({ coin: e.target.value })) });
+  const accountInput = useInput({ value: pathParts.account || 0, label: "Account", onChange: (e: any) => dispatch(setPathParts({ account: e.target.value })) });
+  const externalInput = useInput({ value: pathParts.external || 0, label: "External", onChange: (e: any) => dispatch(setPathParts({ external: e.target.value })) });
+  const segwitAddressInput = useInput({ value: address, label: "SegWit Address" });
   
-  const validateFields = () => {
-    return seed.validate() && path.validate();
-  }
+  const validateFields = () => seedInput.validate() && pathInput.validate();
 
   const generate = () => {
     if(!validateFields()) return;
-
-    const buff = Buffer.from(seed.value, 'hex');
-    const root = fromSeed(buff);
-    console.log("wif", root.toWIF());
-
-    const payment = payments.p2wpkh({ pubkey: root.derivePath(path.value).publicKey });
-    console.log("pub", root.publicKey.toString('hex'));
-    console.log("priv", root.privateKey);
-    console.log("seg", payment);
-    segwitAddress.setValue(payment.address || "");
+    dispatch(generateAddress({ seed, path }));
   }
 
   return (
@@ -60,19 +37,20 @@ export const SegWit = () => {
           a Hierarchical Deterministic (HD) Segregated Witness (SegWit) bitcoin address from a given seed and path
         </div>
         <div className="flex flex-wrap relative mt-4">
-          <Input {...seed} />
+          <Input {...seedInput} />
           <div className="w-full flex flex-wrap mb-4">
-            <Input {...path} className="w-3/6 pr-4" />
+            <Input {...pathInput} className="w-3/6 pr-4" />
             <div className="w-3/6 flex flex-wrap">
-              <div className="w-2/6">
+              <div className="w-3/12 pr-4">
                 <label className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-1">Purpose</label>
-                <Dropdown className="mt-3" options={[39,44,49,84,141]} initialValue={1} onChange={(option: number) => updatePath({ purpose: option })} />
+                <Dropdown className="mt-4" options={[39,44,49,84,141]} initialValue={1} onChange={(option: number) => dispatch(setPathParts({ purpose: option }))} />
               </div>
-              <Input className="w-2/6" value={pathParts.coin || ""} onChange={(e: any) => updatePath({ coin: e.target.value })} />
-              <Input {...path} />
+              <Input className="w-3/12 pr-4" {...coinInput} />
+              <Input className="w-3/12 pr-4" {...accountInput} />
+              <Input className="w-3/12" {...externalInput} />
             </div>
           </div>
-          <Input {...segwitAddress} readOnly disabled copyButton />
+          <Input {...segwitAddressInput} readOnly disabled copyButton />
         </div>
       </div>
     </div>
