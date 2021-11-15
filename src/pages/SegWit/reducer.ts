@@ -2,7 +2,7 @@ import { PayloadAction } from "@reduxjs/toolkit";
 import { payments } from "bitcoinjs-lib";
 import { fromSeed } from "bip32";
 
-import { SegWitData, SegWitPathParts, SegWitState } from "state/types";
+import { SegWitPathParts, SegWitState } from "state/types";
 import createGenericSlice from "state/createGenericSlice";
 
 const initState: SegWitState = {
@@ -67,32 +67,30 @@ const segWitSlice = createGenericSlice({
     generateAddress: (state: SegWitState, action: PayloadAction<GenerateAddressPayload>): SegWitState => {
       const { seed, path } = action.payload;
 
-      const buff = Buffer.from(seed, 'hex');
-      const root = fromSeed(buff);
-      console.log("wif", root.toWIF());
+      try {
+        const buff = Buffer.from(seed, 'hex');
+        const root = fromSeed(buff);
+        console.log("wif", root.toWIF());
+    
+        const payment = payments.p2wpkh({ pubkey: root.derivePath(path).publicKey });
+        console.log("pub", root.publicKey.toString('hex'));
+        console.log("priv", root.privateKey);
+        console.log("seg", payment);
   
-      const payment = payments.p2wpkh({ pubkey: root.derivePath(path).publicKey });
-      console.log("pub", root.publicKey.toString('hex'));
-      console.log("priv", root.privateKey);
-      console.log("seg", payment);
-
-      return {
-        ...state,
-        data: {
-          ...state.data,
-          address: payment.address || ""
+        return {
+          ...state,
+          data: {
+            ...state.data,
+            address: payment.address || ""
+          }
         }
-      }
-    },
-    setError: (state: SegWitState, action: PayloadAction<string>) => { 
-      return {
-        ...state,
-        error: action.payload
+      } catch(e: any) {        
+        return { ...state, error: e.message }
       }
     }
   }
 });
 
-export const { setSeed, setPath, setPathParts, generateAddress, setError } = segWitSlice.actions;
+export const { setSeed, setPath, setPathParts, generateAddress } = segWitSlice.actions;
 
 export default segWitSlice.reducer;

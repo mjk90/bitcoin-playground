@@ -1,6 +1,4 @@
 import React, { useState } from 'react';
-import { fromSeed } from "bip32";
-import { payments } from "bitcoinjs-lib";
 import { useDispatch, useSelector } from 'react-redux';
 
 import { Dropdown, Input } from 'components';
@@ -54,6 +52,7 @@ export const SegWit = () => {
             </div>
           </div>
           <Input {...segwitAddressInput} readOnly disabled copyButton />
+          <p className={`text-red-500 text-xs italic ${error ? "" : "hidden"}`}>{error}</p>
         </div>
       </div>
     </div>
