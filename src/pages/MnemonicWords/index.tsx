@@ -4,17 +4,26 @@ import { payments } from "bitcoinjs-lib";
 import { Dropdown, CopyButton, Input } from 'components';
 import { useDispatch, useSelector } from 'react-redux';
 import { generatePhrase, setWordsCount } from './reducer';
-import { MnemonicState, RootState } from 'state/types';
+import { MnemonicState, RootState, SegWitState } from 'state/types';
 import { wordsToBits } from 'helpers';
+import { setTab } from 'state/navReducer';
+import { generateAddress, setSeed } from 'pages/SegWit/reducer';
 
 const dropdownOptions = [12,15,18,21,24];
 
 export const MnemonicWords = () => {
   const dispatch = useDispatch();
   const { data: { wordsCount, phrase, seed, root }, error, loading }: MnemonicState = useSelector((state: RootState) => state.mnemonic);
+  const { data: { path } }: SegWitState = useSelector((state: RootState) => state.segWit);
   const generate = () => dispatch(generatePhrase(wordsCount));
 
   const [bip32Address, setBip32Address] = useState("");
+
+  const seedToSegwit = () => {
+    dispatch(setSeed(seed));
+    dispatch(generateAddress({ seed, path }));
+    dispatch(setTab(1));
+  }
 
   return (
     <div className="MnemonicWords flex flex-col">
@@ -30,7 +39,13 @@ export const MnemonicWords = () => {
             <label className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-1">Mnemonic Phrase <CopyButton value={phrase} /></label>
             <textarea readOnly disabled className="border rounded h-20 w-full resize-none text-gray-700 mt-3 py-1 px-1 pr-16 leading-tight focus:outline-none" placeholder="Mnemonic Words..." value={phrase + "\n" + bip32Address}></textarea>
           </div>
-          <Input value={seed} label="BIP39 Seed" readOnly disabled copyButton />
+          <Input value={seed} label="BIP39 Seed" readOnly disabled copyButton labelContent={(
+            <span onClick={seedToSegwit}
+              className={`inline-flex items-center justify-center px-2 py-1 mr-2 text-xs leading-none text-white 
+                bg-green-400 hover:bg-green-500 cursor-pointer rounded-full float-right ${!!seed ? "" : "hidden"}`}>
+              Generate SegWit
+            </span>
+          )} />
           <Input value={root} label="Root Key" readOnly disabled copyButton />
         </div>
         <p className={`text-red-500 text-xs italic ${error ? "" : "hidden"}`}>{error}</p>

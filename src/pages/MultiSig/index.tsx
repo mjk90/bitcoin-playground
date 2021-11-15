@@ -5,13 +5,6 @@ import { useDispatch, useSelector } from 'react-redux';
 import { MultiSigState, RootState } from 'state/types';
 import { generateAddress, setMin, setPubKeys } from './reducer';
 
-interface InputValue {
-  value: string;
-  error?: string;
-}
-
-const newInputValue = (val: string = ''): InputValue => ({ value: val });
-const inputError = (input: InputValue, error: string = ''): InputValue => ({ ...input, error });
 const getLineCount = (str: string): number => str.split("\n").length;
 
 export const MultiSig = () => {

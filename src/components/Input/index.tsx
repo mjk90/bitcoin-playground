@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { ReactElement } from 'react';
 import { CopyButton } from '..';
 
 interface InputProps {
@@ -10,15 +10,16 @@ interface InputProps {
   readOnly?: boolean;
   disabled?: boolean;
   onChange?: (item: any) => void;
+  labelContent?: ReactElement
 }
 
 export const Input = (props: InputProps) => {
-  const { value, className = "w-full mb-4", error = "", label = "", copyButton = false, readOnly = false, disabled = false, onChange = (val: any) => { } } = props;
+  const { value, className = "w-full mb-4", error = "", label = "", copyButton = false, readOnly = false, disabled = false, onChange = (val: any) => { }, labelContent } = props;
 
   return (
     <div className={className}>
       <label className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-1">
-        {label} {copyButton ? <CopyButton value={value} /> : ""}
+        {label} {copyButton ? <CopyButton value={value} /> : ""}{labelContent}
       </label>
       <input
         className={`border rounded w-full resize-none text-gray-700 mt-3 py-1 px-1 leading-tight focus:outline-none ${error ? "border-red-500" : ""}`}

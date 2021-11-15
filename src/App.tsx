@@ -34,9 +34,9 @@ function App() {
             </ul>
             <div className="bg-white p-8 text-left mx-auto border">
               {
-                tab === 0 ? <div onClick={() => dispatch(setTab(0))}><MnemonicWords /></div> :
-                tab === 1 ? <div onClick={() => dispatch(setTab(1))}><SegWit /></div> :
-                tab === 2 ? <div onClick={() => dispatch(setTab(2))}><MultiSig /></div> :
+                tab === 0 ? <div><MnemonicWords /></div> :
+                tab === 1 ? <div><SegWit /></div> :
+                tab === 2 ? <div><MultiSig /></div> :
                 <div>No content</div>
               }
             </div>
