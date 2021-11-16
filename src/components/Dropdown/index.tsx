@@ -30,7 +30,7 @@ export const Dropdown = (props: DropdownProps) => {
         </button>
       </div>
 
-      <div className={`origin-top-right absolute right-0 mt-2 w-56 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 focus:outline-none z-10 ${opened ? "block" : "hidden"}`} role="menu" aria-orientation="vertical" aria-labelledby="menu-button">
+      <div className={`origin-top-right absolute right-0 mt-2 w-20 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 focus:outline-none z-10 ${opened ? "block" : "hidden"}`} role="menu" aria-orientation="vertical" aria-labelledby="menu-button">
         <div className="py-1" role="none">
           {options.map((option: number | string, index: number) => 
             <a href="#" key={index} role="menuitem" className={`text-gray-700 block px-4 py-2 text-sm ${index === selectedIndex ? "font-semibold" : "font-normal"}`}

@@ -1,7 +1,7 @@
 import React, { ReactElement, useState } from 'react';
 import { CopyButton } from '..';
 
-interface InputProps {
+interface TextareaProps {
   className?: string;
   label?: string;
   value: string | number;
@@ -14,27 +14,27 @@ interface InputProps {
   labelContent?: ReactElement
 }
 
-export const Input = (props: InputProps) => {
+export const Textarea = (props: TextareaProps) => {
   const { value, className = "w-full mb-4", error = "", privateField = false, label = "", copyButton = false, readOnly = false, disabled = false, onChange = (val: any) => { }, labelContent } = props;
   const [hidden, setHidden] = useState(privateField);
 
   return (
     <div className={className}>
-      <label className="uppercase tracking-wide text-gray-700 text-xs font-bold mb-1 flex flex-col sm:block">
-        <span>{label}</span> {copyButton ? <CopyButton value={value} className="max-w-min" /> : ""}{labelContent}
+      <label className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-1">
+        {label} {copyButton ? <CopyButton value={value} /> : ""}{labelContent}
         {privateField ? <span onClick={() => setHidden(!hidden)}
-            className={`inline-flex items-center justify-center px-2 py-1 mr-2 text-xs leading-none text-white max-w-min mt-1 sm:mt-0
-              cursor-pointer rounded-full float-right ${value ? "" : "hidden"} ${hidden ? "bg-red-400 hover:bg-red-500" : "bg-green-400 hover:bg-green-500" }`}>
+            className={`inline-flex items-center justify-center px-2 py-1 mr-2 text-xs leading-none text-white 
+              cursor-pointer rounded-full float-right ${hidden ? "bg-red-400 hover:bg-red-500" : "bg-green-400 hover:bg-green-500" }`}>
             {hidden ? "Show" : "Hide"}
           </span> : ""}
       </label>
-      <input type={hidden ? "password" : "text"}
-        className={`border rounded w-full resize-none text-gray-700 mt-3 py-1 px-1 leading-tight focus:outline-none ${error ? "border-red-500" : ""}`}
+      <textarea className={`border rounded h-28 w-full resize-y text-gray-700 mt-3 py-1 px-1 pr-16 leading-tight focus:outline-none ${error ? "border-red-500" : ""}`}
         readOnly={readOnly}
         disabled={disabled}
         placeholder={`${label}...`}
         value={value}
-        onChange={onChange} />
+        onChange={onChange}
+      ></textarea>
       <p className={`text-red-500 text-xs italic ${error ? "" : "hidden"}`}>{error}</p>
     </div>
   )

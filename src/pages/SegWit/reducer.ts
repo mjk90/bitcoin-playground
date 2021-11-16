@@ -9,6 +9,8 @@ const initState: SegWitState = {
   data: {
     seed: "",
     path: "m/44'/0'/0'/0",
+    pubkey: "",
+    privkey: "",
     address: "",
     pathParts: {
       purpose: 44,
@@ -73,14 +75,18 @@ const segWitSlice = createGenericSlice({
         console.log("wif", root.toWIF());
     
         const payment = payments.p2wpkh({ pubkey: root.derivePath(path).publicKey });
+        
         console.log("pub", root.publicKey.toString('hex'));
-        console.log("priv", root.privateKey);
+        console.log("priv", root.privateKey?.toString('hex'));
         console.log("seg", payment);
   
         return {
           ...state,
+          error: null,
           data: {
             ...state.data,
+            pubkey: root.publicKey.toString('hex'),
+            privkey: root.privateKey?.toString('hex') || "",
             address: payment.address || ""
           }
         }

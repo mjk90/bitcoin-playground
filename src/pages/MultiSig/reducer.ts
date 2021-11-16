@@ -39,6 +39,15 @@ const multisigSlice = createGenericSlice({
         }
       }
     },
+    addPubKey: (state: MultiSigState, action: PayloadAction<string>): MultiSigState => {
+      return {
+        ...state,
+        data: {
+          ...state.data,
+          pubkeys: state.data.pubkeys.trim() + `\n${action.payload}\n`
+        }
+      }
+    },
     generateAddress: (state: MultiSigState, action: PayloadAction<GenerateMultiSigPayload>): MultiSigState => {
       const { min, pubkeys } = action.payload;
 
@@ -69,6 +78,7 @@ const multisigSlice = createGenericSlice({
   
         return {
           ...state,
+          error: null,
           data: {
             ...state.data,
             multisigAddress: address
@@ -81,6 +91,6 @@ const multisigSlice = createGenericSlice({
   }
 });
 
-export const { setMin, setPubKeys, generateAddress } = multisigSlice.actions;
+export const { setMin, setPubKeys, addPubKey, generateAddress } = multisigSlice.actions;
 
 export default multisigSlice.reducer;

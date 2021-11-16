@@ -1,15 +1,22 @@
 import React, { useState } from 'react';
 
-import { CopyButton } from 'components';
+import { CopyButton, Input, Textarea } from 'components';
 import { useDispatch, useSelector } from 'react-redux';
 import { MultiSigState, RootState } from 'state/types';
 import { generateAddress, setMin, setPubKeys } from './reducer';
+import useInput from 'hooks/useInput';
 
+const validatePubKeys = (value: string | number): string => value ? "" : "Public key(s) are required";
 const getLineCount = (str: string): number => str.split("\n").length;
 
 export const MultiSig = () => {
   const dispatch = useDispatch();
   const { data: { min, pubkeys, multisigAddress }, error, loading }: MultiSigState = useSelector((state: RootState) => state.multisig);
+
+  const pubkeysInput = useInput({ value: pubkeys, label: "Public keys (one per line)...", validate: validatePubKeys, onChange: (e: any) => dispatch(setPubKeys(e.target.value)) });
+  const multisigAddressInput = useInput({ value: multisigAddress, label: "Multi-Sig Address" });
+
+  const validateFields = () => pubkeysInput.validate();
 
   const updateMin = (e: any) => {
     const val = parseInt(e.target.value);
@@ -17,8 +24,10 @@ export const MultiSig = () => {
     dispatch(setMin(val));
   }
 
-  const generate = () => {    
-    dispatch(generateAddress({ min, pubkeys }));
+  const generate = () => {
+    if(validateFields()) {
+      dispatch(generateAddress({ min, pubkeys }));
+    }
   }
 
   return (
@@ -36,19 +45,9 @@ export const MultiSig = () => {
             onChange={updateMin} />&nbsp;
           signatures required, for the following addresses
         </div>
-        <div className="flex flex-wrap relative">
-          <div className="w-full mb-4">
-            <label className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-1 mt-4">Public keys (one per line)</label>
-            <textarea className={`border rounded h-28 w-full resize-y text-gray-700 mt-3 py-1 px-1 pr-16 leading-tight focus:outline-none`}
-              placeholder="Public keys (one per line)..." 
-              value={pubkeys}
-              onChange={(e: any) => dispatch(setPubKeys(e.target.value))}>
-            </textarea>
-          </div>
-          <div className="w-full mb-4">
-            <label className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-1">Multi-Sig Address <CopyButton value={multisigAddress} /></label>
-            <input readOnly disabled className="border rounded w-full resize-none text-gray-700 mt-3 py-1 px-1 leading-tight focus:outline-none" placeholder="Multi-Sig Address..." value={multisigAddress} />
-          </div>
+        <div className="flex flex-wrap relative mt-4">
+          <Textarea {...pubkeysInput} />
+          <Input {...multisigAddressInput} readOnly disabled copyButton />
         </div>
         <p className={`text-red-500 text-xs italic ${error ? "" : "hidden"}`}>{error}</p>
       </div>
