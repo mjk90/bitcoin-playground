@@ -28,7 +28,7 @@ function App() {
           <div className="w-full">
             <ul className="flex justify-center items-center my-4">
               {tabs.map((t: any, i: number) => 
-                <li key={i} 
+                <li key={i} data-testid={`Nav__${t.index}`}
                   className={`cursor-pointer py-2 px-4 text-gray-500 border-b-8 ${tab === i ? "text-green-500 border-green-500" : ""}`} 
                   onClick={() => dispatch(setTab(t.index))}>{t.title}</li>
               )}

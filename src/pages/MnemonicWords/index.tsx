@@ -17,7 +17,7 @@ export const MnemonicWords = () => {
   const { data: { wordsCount, phrase, seed, root }, error, loading }: MnemonicState = useSelector((state: RootState) => state.mnemonic);
   const { data: { path } }: SegWitState = useSelector((state: RootState) => state.segWit);
 
-  const pubkeysInput = useInput({ value: phrase, label: "Mnemonic Phrase..." });  
+  const pubkeysInput = useInput({ value: phrase, label: "Mnemonic Phrase" });  
   const generate = () => dispatch(generatePhrase(wordsCount));
 
   const seedToSegwit = () => {
@@ -27,7 +27,7 @@ export const MnemonicWords = () => {
   }
 
   return (
-    <div className="MnemonicWords flex flex-col">
+    <div data-testid="MnemonicWords" className="MnemonicWords flex flex-col">
       <div className="w-full">
         <div>
           <button className="bg-blue-500 hover:bg-blue-700 text-white text-sm font-bold py-1 px-2 rounded" type="button" onClick={generate}>Generate</button>&nbsp;

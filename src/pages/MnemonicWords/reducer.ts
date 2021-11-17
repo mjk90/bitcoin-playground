@@ -1,11 +1,10 @@
 import { PayloadAction } from "@reduxjs/toolkit";
-import { generateMnemonic, entropyToMnemonic, mnemonicToSeedSync, validateMnemonic } from "bip39";
-import { payments } from "bitcoinjs-lib";
+import { mnemonicToSeedSync } from "bip39";
 import { fromSeed } from "bip32";
 
 import { MnemonicState } from "state/types";
 import createGenericSlice from "state/createGenericSlice";
-import { getAddress, wordsToBits } from "helpers";
+import { randomMnemonic } from "helpers";
 
 const initState: MnemonicState = {
   data: {
@@ -35,28 +34,9 @@ const mnemonicSlice = createGenericSlice({
       const wordsCount = action.payload;
 
       try {
-        let strength = wordsToBits(wordsCount);    
-        let words = generateMnemonic(strength);
-        // setWords(w);
-        // setHex(mnemonicToSeedSync(w).toString('hex'));
+        const words = randomMnemonic(wordsCount);
         const seed = mnemonicToSeedSync(words);
-        // setSeed(seed.toString("hex"));
-        
         const root = fromSeed(seed);
-        console.log("wif", root.toWIF());
-        // setRoot(root.toBase58());
-    
-        const addr = getAddress(root.derivePath("m/0'/0/0"));
-        // setBip32Address(addr);
-        
-        // SegWit or nested SegWit addresses(P2SH) These are multi-purpose addresses that support both non-SegWit and SegWit transactions. These addresses start with “3”.
-        // const keyPair = ECPair.fromWIF(
-        //   'KwDiBf89QgGbjEhKnhXJuH7LrciVrZi3qYjgd9M7rFU73sVHnoWn',
-        // );
-        const { address } = payments.p2wpkh({ pubkey: root.publicKey });
-        console.log("pub", root.publicKey.toString("hex"));
-        console.log("priv", root.privateKey?.toString("hex"));
-        console.log("seg", address);
   
         return {
           ...state,

@@ -13,7 +13,7 @@ export const MultiSig = () => {
   const dispatch = useDispatch();
   const { data: { min, pubkeys, multisigAddress }, error, loading }: MultiSigState = useSelector((state: RootState) => state.multisig);
 
-  const pubkeysInput = useInput({ value: pubkeys, label: "Public keys (one per line)...", validate: validatePubKeys, onChange: (e: any) => dispatch(setPubKeys(e.target.value)) });
+  const pubkeysInput = useInput({ value: pubkeys, label: "Public keys (one per line)", validate: validatePubKeys, onChange: (e: any) => dispatch(setPubKeys(e.target.value)) });
   const multisigAddressInput = useInput({ value: multisigAddress, label: "Multi-Sig Address" });
 
   const validateFields = () => pubkeysInput.validate();
@@ -31,7 +31,7 @@ export const MultiSig = () => {
   }
 
   return (
-    <div className="MnemonicWords flex flex-col">
+    <div data-testid="MultiSig" className="MultiSig flex flex-col">
       <div className="w-full">
         <div>
           <button className="bg-blue-500 hover:bg-blue-700 text-white text-sm font-bold py-1 px-2 rounded" type="button" onClick={generate}>Generate</button>&nbsp;
