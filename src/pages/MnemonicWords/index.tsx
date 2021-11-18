@@ -1,67 +1,51 @@
-import React, { useState } from 'react';
-import { generateMnemonic, entropyToMnemonic, mnemonicToSeedSync, validateMnemonic } from "bip39";
-import { fromSeed } from "bip32";
-import { payments } from "bitcoinjs-lib";
-import crypto from "crypto";
+import React from 'react';
 
-import { copyToClipboard } from '../../helpers';
-import { Dropdown } from '../../components';
+import { Dropdown, Input, Textarea } from 'components';
+import { useDispatch, useSelector } from 'react-redux';
+import { generatePhrase, setWordsCount } from './reducer';
+import { MnemonicState, RootState, SegWitState } from 'state/types';
+import { wordsToBits } from 'helpers';
+import { setTab } from 'state/navReducer';
+import { generateAddress, setSeed } from 'pages/SegWit/reducer';
+import useInput from 'hooks/useInput';
 
-
-const dropdownOptions = [/*3,6,9,*/12,15,18,21,24];
-const wordsToBits = (wordsCount: number) => wordsCount / 3 * 32;
-
-function getAddress(node: any, network?: any): string {
-  // Bitcoin Legacy address (P2pKH)
-  return payments.p2pkh({ pubkey: node.publicKey, network }).address!;
-}
+const dropdownOptions = [12,15,18,21,24];
 
 export const MnemonicWords = () => {
-  const [wordsCount, setWordsCount] = useState(dropdownOptions[0]);
-  const [words, setWords] = useState("");
-  const [seed, setSeed] = useState("");
-  const [root, setRoot] = useState("");
-  const [bip32Address, setBip32Address] = useState("");
+  const dispatch = useDispatch();
+  const { data: { wordsCount, phrase, seed, root }, error, loading }: MnemonicState = useSelector((state: RootState) => state.mnemonic);
+  const { data: { path } }: SegWitState = useSelector((state: RootState) => state.segWit);
 
-  const generate = () => {
-    let strength = wordsToBits(wordsCount);    
-    let w = generateMnemonic(strength);
-    setWords(w);
-    // setHex(mnemonicToSeedSync(w).toString('hex'));
-    const seed = mnemonicToSeedSync(w);
-    setSeed(seed.toString("hex"));
-    
-    const root = fromSeed(seed);
-    setRoot(root.toBase58());
+  const mnemonicPhraseInput = useInput({ value: phrase, label: "Mnemonic Phrase" });  
+  const generate = () => dispatch(generatePhrase(wordsCount));
 
-    const addr = getAddress(root.derivePath("m/0'/0/0"));
-    setBip32Address(addr);
-    
-    // SegWit or nested SegWit addresses(P2SH) These are multi-purpose addresses that support both non-SegWit and SegWit transactions. These addresses start with “3”.
-    // const keyPair = ECPair.fromWIF(
-    //   'KwDiBf89QgGbjEhKnhXJuH7LrciVrZi3qYjgd9M7rFU73sVHnoWn',
-    // );
-    const { address } = payments.p2wpkh({ pubkey: root.publicKey });
-    console.log("pub", root.publicKey);
-    console.log("seg", address);    
+  const seedToSegwit = () => {
+    dispatch(setSeed(seed));
+    dispatch(generateAddress({ seed, path }));
+    dispatch(setTab(1));
   }
-  
 
   return (
-    <div className="MnemonicWords flex flex-col">
+    <div data-testid="MnemonicWords" className="MnemonicWords flex flex-col">
       <div className="w-full">
         <div>
-          {<button className="bg-blue-500 hover:bg-blue-700 text-white text-sm font-bold py-1 px-2 rounded" type="button" onClick={generate}>Generate</button>} a random mnemonic phrase of &nbsp;
-          {<Dropdown className="MnemonicWords__SelectWordsCount flex-shrink-0 text-sm" options={dropdownOptions} onChange={(option: number) => setWordsCount(option)} />} words ({wordsToBits(wordsCount)} bits)
+          <button className="bg-blue-500 hover:bg-blue-700 text-white text-sm font-bold py-1 px-2 rounded" type="button" onClick={generate}>Generate</button>&nbsp;
+          a random mnemonic phrase of &nbsp;
+          <Dropdown className="inline-block flex-shrink-0 text-sm" options={dropdownOptions} onChange={(option: number) => dispatch(setWordsCount(option))} />&nbsp;
+          words ({wordsToBits(wordsCount)} bits)
         </div>
-        <div className="flex flex-col items-center relative">
-          <textarea readOnly className="border rounded h-20 w-full resize-none text-gray-700 mt-3 py-1 px-1 pr-16 leading-tight focus:outline-none" placeholder="Mnemonic Words..." value={words + "\n" + bip32Address}></textarea>
-          <input readOnly className="border rounded w-full resize-none text-gray-700 mt-3 py-1 px-1 leading-tight focus:outline-none" placeholder="Seed..." value={seed} />
-          <input readOnly className="border rounded w-full resize-none text-gray-700 mt-3 py-1 px-1 leading-tight focus:outline-none" placeholder="Root..." value={root} />
-          <button className="absolute top-6 right-3 bg-blue-400 hover:bg-blue-600 text-white text-sm font-bold py-2 px-2 rounded disabled:opacity-50" type="button" onClick={() => copyToClipboard(words)}>
-            <svg className="h-5 w-5 text-white"  width="24" height="24" viewBox="0 0 24 24" strokeWidth="2" stroke="currentColor" fill="none" strokeLinecap="round" strokeLinejoin="round">  <path stroke="none" d="M0 0h24v24H0z"/>  <rect x="8" y="8" width="12" height="12" rx="2" />  <path d="M16 8v-2a2 2 0 0 0 -2 -2h-8a2 2 0 0 0 -2 2v8a2 2 0 0 0 2 2h2" /></svg>
-          </button>
+        <div className="flex flex-wrap relative mt-4">
+          <Textarea {...mnemonicPhraseInput} readOnly disabled copyButton testid="MnemonicWords__Phrase" />
+          <Input value={seed} label="BIP39 Seed" readOnly disabled copyButton testid="MnemonicWords__Seed" labelContent={(
+            <span onClick={seedToSegwit}
+              className={`inline-flex items-center justify-center px-2 py-1 mr-2 text-xs leading-none text-white max-w-min mt-1 sm:mt-0
+                bg-green-400 hover:bg-green-500 cursor-pointer rounded-full float-right ${!!seed ? "" : "hidden"}`}>
+              Generate&nbsp;Keys
+            </span>
+          )} />
+          <Input value={root} label="Root Key" readOnly disabled copyButton testid="MnemonicWords__Root" />
         </div>
+        <p data-testid="MnemonicWords__Error" className={`text-red-500 text-xs italic ${error ? "" : "hidden"}`}>{error}</p>
       </div>
     </div>
   );
