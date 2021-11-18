@@ -36,7 +36,7 @@ describe("MultiSig component", () => {
           multisigAddress: "test address"
         } 
       }});
-    const { getByDisplayValue, getByTestId } = render(
+    const { getByDisplayValue } = render(
       <Provider store={store}>
         <MultiSig />
       </Provider>

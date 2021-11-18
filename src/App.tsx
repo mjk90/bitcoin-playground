@@ -1,7 +1,7 @@
 import React from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 
-import { MnemonicWords, SegWit, MultiSig } from './pages';
+import { MnemonicWords, SegWit, MultiSig, Info } from './pages';
 import { NavState, RootState } from 'state/types';
 import { setTab } from 'state/navReducer';
 import { Popup } from 'components/Popup';
@@ -11,7 +11,8 @@ import './App.css';
 const tabs = [
   { index: 0, title: "Mnemonic Phrase" },
   { index: 1, title: "Generate Keys" },
-  { index: 2, title: "Generate MultiSig" }
+  { index: 2, title: "Generate MultiSig" },
+  { index: 3, title: "Info" },
 ];
 
 function App() {
@@ -26,19 +27,19 @@ function App() {
       <div className="App__Body max-w-screen-lg block mx-auto">
         <div className="flex justify-center">
           <div className="w-full">
-            <ul className="flex justify-center items-center my-4">
+            <ul className="flex justify-center items-center my-4 flex-col sm:flex-row">
               {tabs.map((t: any, i: number) => 
                 <li key={i} data-testid={`Nav__${t.index}`}
                   className={`cursor-pointer py-2 px-4 text-gray-500 border-b-8 ${tab === i ? "text-green-500 border-green-500" : ""}`} 
                   onClick={() => dispatch(setTab(t.index))}>{t.title}</li>
               )}
             </ul>
-            <div className="p-4 sm:p-8 text-left mx-auto border bg-white shadow-sm">
+            <div className="p-4 sm:p-8 text-left mx-auto border bg-white shadow-sm mb-4">
               {
                 tab === 0 ? <div><MnemonicWords /></div> :
                 tab === 1 ? <div><SegWit /></div> :
                 tab === 2 ? <div><MultiSig /></div> :
-                <div>No content</div>
+                <Info />
               }
             </div>
           </div>
