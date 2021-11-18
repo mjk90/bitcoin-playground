@@ -42,14 +42,15 @@ export const MultiSig = () => {
             className="border rounded text-gray-700 text-xs font-bold w-16 py-1 px-1 leading-tight focus:outline-none" 
             placeholder="Min..." 
             value={min} 
-            onChange={updateMin} />&nbsp;
+            onChange={updateMin}
+            data-testid="MultiSig__Min" />&nbsp;
           signatures required, for the following addresses
         </div>
         <div className="flex flex-wrap relative mt-4">
-          <Textarea {...pubkeysInput} />
-          <Input {...multisigAddressInput} readOnly disabled copyButton />
+          <Textarea {...pubkeysInput} testid="MultiSig__PubKeys" />
+          <Input {...multisigAddressInput} readOnly disabled copyButton testid="MultiSig__Address" />
         </div>
-        <p className={`text-red-500 text-xs italic ${error ? "" : "hidden"}`}>{error}</p>
+        <p data-testid="MultiSig__Error" className={`text-red-500 text-xs italic ${error ? "" : "hidden"}`}>{error}</p>
       </div>
     </div>
   );

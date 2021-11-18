@@ -11,11 +11,12 @@ interface InputProps {
   readOnly?: boolean;
   disabled?: boolean;
   onChange?: (item: any) => void;
-  labelContent?: ReactElement
+  labelContent?: ReactElement;
+  testid?: string;
 }
 
 export const Input = (props: InputProps) => {
-  const { value, className = "w-full mb-4", error = "", privateField = false, label = "", copyButton = false, readOnly = false, disabled = false, onChange = (val: any) => { }, labelContent } = props;
+  const { value, className = "w-full mb-4", error = "", privateField = false, label = "", copyButton = false, readOnly = false, disabled = false, onChange = (val: any) => { }, labelContent, testid } = props;
   const [hidden, setHidden] = useState(privateField);
 
   return (
@@ -34,7 +35,8 @@ export const Input = (props: InputProps) => {
         disabled={disabled}
         placeholder={`${label}...`}
         value={value}
-        onChange={onChange} />
+        onChange={onChange}
+        data-testid={testid} />
       <p className={`text-red-500 text-xs italic ${error ? "" : "hidden"}`}>{error}</p>
     </div>
   )

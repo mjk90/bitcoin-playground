@@ -1,7 +1,6 @@
-import React, { useState } from 'react';
-import { payments } from "bitcoinjs-lib";
+import React from 'react';
 
-import { Dropdown, CopyButton, Input, Textarea } from 'components';
+import { Dropdown, Input, Textarea } from 'components';
 import { useDispatch, useSelector } from 'react-redux';
 import { generatePhrase, setWordsCount } from './reducer';
 import { MnemonicState, RootState, SegWitState } from 'state/types';
@@ -17,7 +16,7 @@ export const MnemonicWords = () => {
   const { data: { wordsCount, phrase, seed, root }, error, loading }: MnemonicState = useSelector((state: RootState) => state.mnemonic);
   const { data: { path } }: SegWitState = useSelector((state: RootState) => state.segWit);
 
-  const pubkeysInput = useInput({ value: phrase, label: "Mnemonic Phrase" });  
+  const mnemonicPhraseInput = useInput({ value: phrase, label: "Mnemonic Phrase" });  
   const generate = () => dispatch(generatePhrase(wordsCount));
 
   const seedToSegwit = () => {
@@ -36,17 +35,17 @@ export const MnemonicWords = () => {
           words ({wordsToBits(wordsCount)} bits)
         </div>
         <div className="flex flex-wrap relative mt-4">
-          <Textarea {...pubkeysInput} readOnly disabled copyButton />
-          <Input value={seed} label="BIP39 Seed" readOnly disabled copyButton labelContent={(
+          <Textarea {...mnemonicPhraseInput} readOnly disabled copyButton testid="MnemonicWords__Phrase" />
+          <Input value={seed} label="BIP39 Seed" readOnly disabled copyButton testid="MnemonicWords__Seed" labelContent={(
             <span onClick={seedToSegwit}
               className={`inline-flex items-center justify-center px-2 py-1 mr-2 text-xs leading-none text-white max-w-min mt-1 sm:mt-0
                 bg-green-400 hover:bg-green-500 cursor-pointer rounded-full float-right ${!!seed ? "" : "hidden"}`}>
               Generate&nbsp;Keys
             </span>
           )} />
-          <Input value={root} label="Root Key" readOnly disabled copyButton />
+          <Input value={root} label="Root Key" readOnly disabled copyButton testid="MnemonicWords__Root" />
         </div>
-        <p className={`text-red-500 text-xs italic ${error ? "" : "hidden"}`}>{error}</p>
+        <p data-testid="MnemonicWords__Error" className={`text-red-500 text-xs italic ${error ? "" : "hidden"}`}>{error}</p>
       </div>
     </div>
   );

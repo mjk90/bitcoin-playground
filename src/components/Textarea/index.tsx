@@ -11,11 +11,12 @@ interface TextareaProps {
   readOnly?: boolean;
   disabled?: boolean;
   onChange?: (item: any) => void;
-  labelContent?: ReactElement
+  labelContent?: ReactElement,
+  testid?: string
 }
 
 export const Textarea = (props: TextareaProps) => {
-  const { value, className = "w-full mb-4", error = "", privateField = false, label = "", copyButton = false, readOnly = false, disabled = false, onChange = (val: any) => { }, labelContent } = props;
+  const { value, className = "w-full mb-4", error = "", privateField = false, label = "", copyButton = false, readOnly = false, disabled = false, onChange = (val: any) => { }, labelContent, testid } = props;
   const [hidden, setHidden] = useState(privateField);
 
   return (
@@ -34,6 +35,7 @@ export const Textarea = (props: TextareaProps) => {
         placeholder={`${label}...`}
         value={value}
         onChange={onChange}
+        data-testid={testid}
       ></textarea>
       <p className={`text-red-500 text-xs italic ${error ? "" : "hidden"}`}>{error}</p>
     </div>

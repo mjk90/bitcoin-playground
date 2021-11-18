@@ -43,21 +43,21 @@ export const SegWit = () => {
           values derived from the given seed & path, including public key, private key & SegWit bitcoin address
         </div>
         <div className="flex flex-wrap relative mt-4">
-          <Input {...seedInput} />
+          <Input {...seedInput} testid="SegWit__Seed" />
           <div className="w-full flex flex-wrap mb-4">
-            <Input {...pathInput} className="w-full sm:w-3/6 pr-4 mb-4 sm:mb-0" />
+            <Input {...pathInput} className="w-full sm:w-3/6 pr-4 mb-4 sm:mb-0" testid="SegWit__Path" />
             <div className="w-full sm:w-3/6 flex flex-wrap">
               <div className="w-3/12 pr-4">
                 <label className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-1">Purpose</label>
-                <Dropdown className="mt-4" options={[39,44,49,84,141]} initialValue={1} onChange={(option: number) => dispatch(setPathParts({ purpose: option }))} />
+                <Dropdown className="mt-4" options={[39,44,49,84,141]} initialValue={1} onChange={(option: number) => dispatch(setPathParts({ purpose: option }))} testid="SegWit__Purpose" />
               </div>
-              <Input {...coinInput} className="w-3/12 pr-4 " />
-              <Input {...accountInput} className="w-3/12 pr-4" />
-              <Input {...externalInput} className="w-3/12" />
+              <Input {...coinInput} className="w-3/12 pr-4" testid="SegWit__Coin" />
+              <Input {...accountInput} className="w-3/12 pr-4" testid="SegWit__Account" />
+              <Input {...externalInput} className="w-3/12" testid="SegWit__External" />
             </div>
           </div>
           <div className="w-full flex flex-wrap mb-4">
-            <Input {...pubKeyInput} className="w-3/6 pr-4" readOnly disabled copyButton labelContent={(
+            <Input {...pubKeyInput} className="w-3/6 pr-4" readOnly disabled copyButton testid="SegWit__PubKey" labelContent={(
               <span title="Add to multi-sig public keys list" 
                 onClick={() => {
                   dispatch(addPubKey(pubkey));
@@ -68,10 +68,10 @@ export const SegWit = () => {
                 +&nbsp;Multisig
               </span>
             )} />
-            <Input {...privKeyInput} className="w-3/6" readOnly disabled copyButton privateField />
+            <Input {...privKeyInput} className="w-3/6" readOnly disabled copyButton privateField testid="SegWit__PrivKey" />
           </div>
-          <Input {...segwitAddressInput} readOnly disabled copyButton />
-          <p className={`text-red-500 text-xs italic ${error ? "" : "hidden"}`}>{error}</p>
+          <Input {...segwitAddressInput} readOnly disabled copyButton testid="SegWit__Address" />
+          <p data-testid="SegWit__Error" className={`text-red-500 text-xs italic ${error ? "" : "hidden"}`}>{error}</p>
         </div>
       </div>
     </div>

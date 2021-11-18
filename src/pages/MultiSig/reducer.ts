@@ -1,7 +1,5 @@
 import { PayloadAction } from "@reduxjs/toolkit";
-import { generateMnemonic, entropyToMnemonic, mnemonicToSeedSync, validateMnemonic } from "bip39";
 import { payments } from "bitcoinjs-lib";
-import { fromSeed } from "bip32";
 
 import { MultiSigState } from "state/types";
 import createGenericSlice from "state/createGenericSlice";
@@ -44,7 +42,9 @@ const multisigSlice = createGenericSlice({
         ...state,
         data: {
           ...state.data,
-          pubkeys: state.data.pubkeys.trim() + `\n${action.payload}\n`
+          pubkeys: state.data.pubkeys.length ? 
+            state.data.pubkeys.trim() + `\n${action.payload}` : 
+            action.payload
         }
       }
     },
@@ -52,12 +52,10 @@ const multisigSlice = createGenericSlice({
       const { min, pubkeys } = action.payload;
 
       try {
-        // const pubkeys = [
-        //   '026477115981fe981a6918a6297d9803c4dc04f328f22041bedff886bbc2962e01',
-        //   '02c96db2302d19b43d4c69368babace7854cc84eb9e061cde51cfa77ca4a22b8b9',
-        //   '03c6103b3b83e4a24a0e33a4df246ef11772f9992663db0c35759a5e2ebf68d8e9',
-        //   root.derivePath(bip32Path).publicKey.toString("hex")
-        // ].map(hex => Buffer.from(hex, 'hex'));
+        if (!pubkeys.length) {
+          throw Error("Public key(s) are required");
+        }
+
         let keys: Buffer[] = [];
         const lines = pubkeys.split("\n");
 
@@ -74,7 +72,6 @@ const multisigSlice = createGenericSlice({
         }
 
         const { address = "" } = payments.p2sh({ redeem: payments.p2ms({ m: min, pubkeys: keys }) });
-        console.log({address});
   
         return {
           ...state,

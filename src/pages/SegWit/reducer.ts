@@ -4,6 +4,7 @@ import { fromSeed } from "bip32";
 
 import { SegWitPathParts, SegWitState } from "state/types";
 import createGenericSlice from "state/createGenericSlice";
+import { assemblePathString } from "helpers";
 
 const initState: SegWitState = {
   data: {
@@ -22,8 +23,6 @@ const initState: SegWitState = {
   loading: true,
   error: null
 };
-
-const assemblePathString = (parts: SegWitPathParts) => `m/${parts.purpose}'/${parts.coin}'/${parts.account}'/${parts.external}`;
 
 const segWitSlice = createGenericSlice({
   name: "segWit",
@@ -62,8 +61,6 @@ const segWitSlice = createGenericSlice({
           path: assemblePathString({ purpose, coin, account, external }),
           pathParts: { purpose, coin, account, external }
         },
-        loading: false,
-        error: null
       }
     },
     generateAddress: (state: SegWitState, action: PayloadAction<GenerateAddressPayload>): SegWitState => {
